@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.61 (Macintosh; I; PPC) [Netscape]">
+   <title>picpdoc.html</title>
+</head>
+<body>
+
+<center><font size="+2">picp -- PICSTART Plus Programmer Interface</font></center>
+
+<p><font size="+2">BUILDING:</font>
+<br>Copy picp.tgz to the target directory then open and decompress the
+archive with:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>tar -xzf picp.tgz</b>
+</p><p>Change to the picp directory:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>cd picp</b>
+</p><p>Build the application:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>make</b>
+</p><p><font size="+2">INSTALLING:</font>
+<br>Type <b>make install</b>.&nbsp; This will try to copy the executable
+to /usr/local/bin.&nbsp; If this isn't where your local executables live,
+either change the Makefile or copy the executable yourself.&nbsp; You may
+need to be root to copy into the /usr/local/bin directory.
+</p><p><font size="+2">INVOKING:</font>
+<br>picp requires as command line arguments a serial device, a PIC device,
+and one or more flags.&nbsp; In general,
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp ttydevice picdevice [-q] [-h] [-v]
+[-f] [-s [size]] [-b[picd]] [-e[picd]] [[-r|-w][picd] [value]]</b>
+<br>where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; ttydevice is the serial port to which the
+PICSTART Plus is attached (e.g., /dev/ttyS0)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; picdevice is the name of the PIC to be operated
+on (view help for a complete list)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -q suppresses most messages and just returns
+the essential information
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -h displays help along with a complete list
+of supported parts
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -v displays the version number returned by
+the PICSTART Plus itself
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -f causes verify errors while programming
+to be ignored
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -s [size] displays a hash mark status bar
+while programming or erasing
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -b blank checks the requested region
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -e erases the requested region (flash devices
+only)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -r reads the requested region
+<br>&nbsp;&nbsp;&nbsp;&nbsp; -w writes to the requested region
+<br>&nbsp;&nbsp;&nbsp;&nbsp; possible regions:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p = program memory
+space
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i = ID locations
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c = configuration
+word
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d = data memory space
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o = oscillator calibration
+space
+</p><p>For the following discussions, the PICSTART Plus is assumed to be connected
+to /dev/ttyS0 and the PIC device is taken to be a PIC16F84.
+</p><p><font size="+2">PICSTART Plus VERSION:</font>
+<br>To verify communications with the PICSTART Plus, enter the serial device
+it is attached to and the name of any supported PIC device, plus -v to
+report the version number:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -v</b>
+</p><p>If all is well, the firmware version number of the PICSTART Plus will
+be returned.&nbsp; If the version number of the firmware in your PICSTART
+is too old, an error message will be returned, prompting you to contact
+<a href="http://www.microchip.com/">Microchip</a>
+to obtain the latest firmware for your PICSTART Plus.&nbsp; The PICSTART
+Plus firmware runs on a PIC17C44-25.
+</p><p><font size="+2">BLANK CHECKING:</font>
+<br>To blank check the device, enter:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -b</b>
+<br>This will check all regions which exist on the device and report whether
+each is blank or not.
+</p><p>Specific regions can be checked individually by adding their specifiers
+to the -b argument:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -bp</b>
+<br>This example will only blank check the program space.&nbsp; More than
+one specifier may be added to a single argument:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -bpcd</b>
+<br>In this case, the program space, the configuration bits, and the data
+space will be blank checked.
+</p><p><font size="+2">READING:</font>
+<br>To read from the device's program space, enter:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -rp</b>
+<br>The contents of the program space will be dumped to the terminal in
+Intel Hex format.&nbsp; Optionally, you may specify a file to write the
+results to:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -rp file.hex</b>
+<br>The contents of the program space will be dumped in Intel Hex format
+to a file named file.hex.&nbsp; If a file named file.hex already exists
+(and the user has proper permissions) it will be overwritten.
+</p><p>To read the device's ID locations, enter:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -ri</b>
+</p><p>To read the device's configuration bits, enter:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -rc</b>
+</p><p>To read the device's data memory space (if present), enter:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -rd</b>
+<br>As with the program space, a file name to dump the output to may optionally
+be added as the next argument.
+</p><p>More than one region may be requested in a single argument, such as:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -rci</b>
+<br>This will return the configuration bits and the contents of the ID
+locations.
+</p><p><font size="+2">ERASING:</font>
+<br>To erase a device's program region (flash devices only), enter:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -ep</b>
+<br>Any combination of regions may be specified in the -e argument.&nbsp;
+After an erase operation an implicit blank check is performed on the specified
+region so that the erase operation returns the proper result (fail or not
+fail).
+</p><p><font size="+2">WRITING:</font>
+<br>To write a device's configuration bits, enter:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -wc 0x3ffe</b>
+<br>This will try to write the value 0x3ffe to the device's configuration
+word.&nbsp; If it fails to verify it will return with a non-zero (failed)
+result.&nbsp; The configuration word value may be specified in hexadecimal,
+decimal, or binary:
+<br>&nbsp; 0xnnnn or 0Xnnnn (leading 0x or 0X) -- hexadecimal
+<br>&nbsp; 0bnnnnnnnnnnnnnnnn or 0Bnnnnnnnnnnnnnnnn (leading 0b or 0B)
+-- binary
+<br>&nbsp; anything else -- decimal
+</p><p>The configuration word may also be written along with the program space
+with the command:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -wp infile.hex</b>
+<br>if the Intel Hex file named infile.hex contains a value for the configuration
+word at the proper address for the specified device.
+</p><p><font size="+2">STATUS BAR:</font>
+<br>The write and erase operations on program or data spaces can take a
+little while, so a status bar is available in the form of a line of hash
+marks (#).&nbsp; The status bar is invoked with:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -s 30 -wp input.hex</b>
+<br>Since the arguments are intrepreted from left to right, the -s argument
+must preceed the -w argument or it won't be interpreted until after the
+write is complete.&nbsp; If the argument following -s is not another flag
+(i.e., doesn't have a leading '-') it is interpreted as the number of hash
+marks to put up in a complete status bar.&nbsp; If no number is provided
+the default value of 20 is used.&nbsp; As the write progresses hash marks
+will be put to the terminal at uniform intervals until the specified number
+of hash marks are displayed and the write is complete.&nbsp; The width
+of the bar is dependent on the actual amount of data written -- picp only
+writes the areas specified by the input data and skips regions which are
+not defined, so the bar may actually be shorter than the length specified.
+</p><p><font size="+2">STDIN/STDOUT AND PIPING:</font>
+<br>stdin and stdout are used to enable piping of picp with other applications.&nbsp;
+As a useless example:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -b | grep "not blank"</b>
+<br>will only display the lines relating to regions which are not blank.
+</p><p>Likewise:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>cat input.hex | picp /dev/ttyS0 16f84 -wp</b>
+<br>will yield the same result as:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -wp input.hex</b>
+</p><p><font size="+2">ORDER OF OPERATION:</font>
+<br>Arguments are interpreted and executed in order, from left to right.&nbsp;
+This permits a sequence of operations to be performed with a single command,
+such as:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -ep -wp input.hex
+-wc 0x0005 -rp output.hex</b>
+<br>This will first attempt to erase the program space, then write to it
+from a file named input.hex, then write the value 0x0005 to the configuration
+bits, then read the program space back out and save it to a file named
+output.hex.&nbsp; If any operation fails, the remaining operations are
+aborted.&nbsp; Thus, if the erase fails, the write won't occur.&nbsp; If
+an operation fails picp will return a non-zero result.
+</p><p>If a modifier such as -s is inserted like this:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -ep -s -wp input.hex
+-wc 0x0005 -rp output.hex</b>
+<br>it is important to note that the status bar will appear for the write
+but not for the erase, since the -s argument is to the right of the -ep
+argument.&nbsp; To add status bars to both operations, type:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>picp /dev/ttyS0 16f84 -s -ep -wp input.hex
+-wc 0x0005 -rp output.hex</b>
+</p><p><font size="+2">REMAINING ITEMS:</font>
+<br>The database of PIC descriptions is not quite complete.&nbsp; The flags
+indicating which regions are present on a given device (e.g., EEPROM data
+space) are only defined for a few devices.&nbsp; All others devices are
+assumed (for now) to have all regions, which may mean that, for instance,
+blank checking may return a result on a region that doesn't actually exist
+in the part.&nbsp; It's generally not harmful but it can be confusing.
+</p><p>The majority of PIC devices supported have not been tested.&nbsp; While
+every effort was taken to ensure accuracy, errors may be present in the
+PIC description database.&nbsp; If you encounter a device which appears
+to be incorrect, please let us know so it can be fixed in the next release.
+<br>&nbsp;
+</p><p><font size="+2">FEEDBACK:</font>
+<br>Please send comments, bug reports, suggestions, etc. to <a href="mailto:apines@cosmodog.com">apines@cosmodog.com</a>.
+<br>&nbsp;
+
+
+</p></body></html>
